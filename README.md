@@ -3,3 +3,4 @@
 
 
 ![image](file:///Users/pomelo/Desktop/WZBLinkageTableView.gifw=true)
+ ![image](https://github.com/WZBbiao/WZBLinkageTableView/WZBLinkageTableView.gif)
