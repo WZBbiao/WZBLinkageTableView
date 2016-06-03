@@ -3,4 +3,4 @@
 
  ![image](https://github.com/WZBbiao/WZBLinkageTableView/blob/master/WZBLinkageTableView.gif?raw=true)
 
-详解在这:http://www.jianshu.com/p/5f4cbd7f12ea
+详解在这:http://www.jianshu.com/p/dfb73aa08602
