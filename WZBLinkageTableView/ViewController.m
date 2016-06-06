@@ -70,6 +70,14 @@
     [leftTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:0] animated:YES scrollPosition:UITableViewScrollPositionTop];
 }
 
+- (void)selectLeftTableViewWithScrollView:(UIScrollView *)scrollView {
+    // 如果现在滑动的是左边的tableView，不做任何处理
+    if ((UITableView *)scrollView == self.leftTableView) return;
+    
+    // 滚动右边tableView，设置选中左边的tableView某一行。indexPathsForVisibleRows属性返回屏幕上可见的cell的indexPath数组，利用这个属性就可以找到目前所在的分区
+    [self.leftTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:self.rightTableView.indexPathsForVisibleRows.firstObject.section inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+}
+
 #pragma mark - UITableViewDelegate && UITableViewDataSource
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
     if (tableView == self.leftTableView) return 1;
@@ -116,11 +124,19 @@
 
 #pragma mark - UIScrollViewDelegate
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView{ // 监听tableView滑动
-    // 如果现在滑动的是左边的tableView，不做任何处理
-    if ((UITableView *)scrollView == self.leftTableView) return;
-    
-    // 滚动右边tableView，设置选中左边的tableView某一行。indexPathsForVisibleRows属性返回屏幕上可见的cell的indexPath数组，利用这个属性就可以找到目前所在的分区
-    [self.leftTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:self.rightTableView.indexPathsForVisibleRows.firstObject.section inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
+    [self selectLeftTableViewWithScrollView:scrollView];
 }
+
+// 注释上边一个方法，放开下边两个方法，可以在点击leftTableView的时候去除阴影
+/*
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
+    [self selectLeftTableViewWithScrollView:scrollView];
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset{
+    // 推拽将要结束的时候手动调一下这个方法
+    [self scrollViewDidEndDecelerating:scrollView];
+}
+*/
 
 @end
