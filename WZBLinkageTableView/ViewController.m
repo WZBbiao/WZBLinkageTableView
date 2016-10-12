@@ -17,6 +17,9 @@
 @property (weak, nonatomic) UITableView *rightTableView;
 @property (nonatomic, strong) NSMutableArray *datas;
 
+// 用来保存当前左边tableView选中的行数
+@property (strong, nonatomic) NSIndexPath *currentSelectIndexPath;
+
 @end
 
 @implementation ViewController
@@ -26,7 +29,7 @@
 - (NSMutableArray *)datas {
     if (!_datas) {
         _datas = [NSMutableArray array];
-        for (NSInteger i = 1; i <= 20; i++) {
+        for (NSInteger i = 1; i <= 10; i++) {
             [_datas addObject:[NSString stringWithFormat:@"第%zd分区", i]];
         }
     }
@@ -53,7 +56,7 @@
 - (void)setBaseTableView {
     // leftTableView
     UITableView *leftTableView = [[UITableView alloc] initWithFrame:(CGRect){0, 0, WZBScreenWidth * 0.25f, WZBScreenHeight}];
-    leftTableView.backgroundColor = [UIColor redColor];
+//    leftTableView.backgroundColor = [UIColor redColor];
     [self.view addSubview:leftTableView];
     self.leftTableView = leftTableView;
     
@@ -71,9 +74,11 @@
 }
 
 - (void)selectLeftTableViewWithScrollView:(UIScrollView *)scrollView {
+    if (self.currentSelectIndexPath) {
+        return;
+    }
     // 如果现在滑动的是左边的tableView，不做任何处理
     if ((UITableView *)scrollView == self.leftTableView) return;
-    
     // 滚动右边tableView，设置选中左边的tableView某一行。indexPathsForVisibleRows属性返回屏幕上可见的cell的indexPath数组，利用这个属性就可以找到目前所在的分区
     [self.leftTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:self.rightTableView.indexPathsForVisibleRows.firstObject.section inSection:0] animated:YES scrollPosition:UITableViewScrollPositionMiddle];
 }
@@ -86,7 +91,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     if (tableView == self.leftTableView) return self.datas.count;
-    return 20;
+    return 3;
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section{
@@ -111,6 +116,7 @@
     
     // 点击左边的tableView，设置选中右边的tableView某一行。左边的tableView的每一行对应右边tableView的每个分区
     [self.rightTableView selectRowAtIndexPath:[NSIndexPath indexPathForRow:0 inSection:indexPath.row] animated:YES scrollPosition:UITableViewScrollPositionTop];
+    self.currentSelectIndexPath = indexPath;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -127,16 +133,10 @@
     [self selectLeftTableViewWithScrollView:scrollView];
 }
 
-// 注释上边一个方法，放开下边两个方法，可以在点击leftTableView的时候去除阴影
-/*
-- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView{
-    [self selectLeftTableViewWithScrollView:scrollView];
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView {
+    
+    // 重新选中一下当前选中的行数，不然会有bug
+    if (self.currentSelectIndexPath) self.currentSelectIndexPath = nil;
 }
-
-- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset{
-    // 推拽将要结束的时候手动调一下这个方法
-    [self scrollViewDidEndDecelerating:scrollView];
-}
-*/
 
 @end
